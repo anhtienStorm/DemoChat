@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/navigation_chat">
+
+    <fragment
+        android:id="@+id/navigation_chat"
+        android:name="com.bkav.demochat.ChatFragment"
+        android:label="Chat"
+        tools:layout="@layout/chat_fragment" />
+
+    <fragment
+        android:id="@+id/navigation_list_user"
+        android:name="com.bkav.demochat.ListUserFragment"
+        android:label="Hoạt Động"
+        tools:layout="@layout/list_user_fragment" />
+
+</navigation>
