@@ -7,9 +7,9 @@
 
     <fragment
         android:id="@+id/navigation_chat"
-        android:name="com.bkav.demochat.ChatFragment"
+        android:name="com.bkav.demochat.ChatListFragment"
         android:label="Chat"
-        tools:layout="@layout/chat_fragment" />
+        tools:layout="@layout/chat_list_fragment" />
 
     <fragment
         android:id="@+id/navigation_list_user"
