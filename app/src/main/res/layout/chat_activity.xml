@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/list_message"
+        app:reverseLayout="true"
         android:layout_above="@+id/view_send_message"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
@@ -26,7 +29,7 @@
         <ImageView
             android:id="@+id/send_message"
             android:src="@drawable/ic_send"
-            android:padding="10dp"
+            android:padding="17dp"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"

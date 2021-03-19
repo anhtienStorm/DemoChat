@@ -1,6 +1,7 @@
 package com.bkav.demochat;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,9 +15,10 @@ import java.util.ArrayList;
 
 public class ChatListAdapter extends RecyclerView.Adapter<ChatListViewHolder> {
 
+    private static final String NAME_USER_CHAT = "name_user_chat";
+
     Context mContext;
     ArrayList<User> mUserList;
-    ClickChatItemView mClickChatItemView;
 
     public ChatListAdapter(Context context){
         mContext = context;
@@ -38,6 +40,14 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull ChatListViewHolder holder, int position) {
         holder.bindView(mUserList.get(position));
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(mContext, ChatActivity.class);
+                intent.putExtra(NAME_USER_CHAT, mUserList.get(position).getUsername());
+                mContext.startActivity(intent);
+            }
+        });
     }
 
     @Override
@@ -45,13 +55,6 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListViewHolder> {
         return mUserList.size();
     }
 
-    public void setClickChatItemView(){
-
-    }
-
-    public interface ClickChatItemView{
-        void onClick();
-    }
 }
 
 class ChatListViewHolder extends RecyclerView.ViewHolder {
