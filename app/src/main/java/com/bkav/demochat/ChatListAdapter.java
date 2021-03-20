@@ -16,12 +16,15 @@ import java.util.ArrayList;
 public class ChatListAdapter extends RecyclerView.Adapter<ChatListViewHolder> {
 
     private static final String NAME_USER_CHAT = "name_user_chat";
+    private static final String ID_RECEIVER = "id_receiver";
 
     Context mContext;
     ArrayList<User> mUserList;
+    int mItemResource;
 
-    public ChatListAdapter(Context context){
+    public ChatListAdapter(Context context, int itemResource){
         mContext = context;
+        mItemResource = itemResource;
     }
 
     public void updateChatList(ArrayList<User> users){
@@ -33,7 +36,7 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListViewHolder> {
     @Override
     public ChatListViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(mContext);
-        View userItemView = inflater.inflate(R.layout.user_item_view, parent, false);
+        View userItemView = inflater.inflate(mItemResource, parent, false);
         return new ChatListViewHolder(userItemView, mContext);
     }
 
@@ -45,6 +48,7 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListViewHolder> {
             public void onClick(View view) {
                 Intent intent = new Intent(mContext, ChatActivity.class);
                 intent.putExtra(NAME_USER_CHAT, mUserList.get(position).getUsername());
+                intent.putExtra(ID_RECEIVER, mUserList.get(position).getId());
                 mContext.startActivity(intent);
             }
         });

@@ -2,6 +2,7 @@ package com.bkav.demochat;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -19,6 +20,7 @@ import java.util.Date;
 public class ChatActivity extends AppCompatActivity {
 
     private static final String NAME_USER_CHAT = "name_user_chat";
+    private static final String ID_RECEIVER = "id_receiver";
 
     private EditText mContentMessageSend;
     private ImageView mButtonSend;
@@ -34,6 +36,7 @@ public class ChatActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         setTitle(intent.getStringExtra(NAME_USER_CHAT));
+        mIdReceiver = intent.getIntExtra(ID_RECEIVER, -1);
 
         mMessageList = new ArrayList<>();
         mMessageRecyclerView = findViewById(R.id.list_message);
@@ -41,7 +44,6 @@ public class ChatActivity extends AppCompatActivity {
         mButtonSend = findViewById(R.id.send_message);
 
         initMessageList();
-        mIdReceiver = 2;
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getApplicationContext());
         linearLayoutManager.setStackFromEnd(true);
         mMessageListAdapter = new MessageListAdapter(getApplicationContext(), mIdReceiver);
@@ -53,7 +55,7 @@ public class ChatActivity extends AppCompatActivity {
         mButtonSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (!mContentMessageSend.getText().equals("")){
+                if (!TextUtils.isEmpty(mContentMessageSend.getText())){
                     Message message = new Message(1, mIdReceiver, mContentMessageSend.getText().toString(), getDateTimeCurrent());
                     mMessageList.add(message);
                     mMessageListAdapter.updateMessageList(mMessageList);

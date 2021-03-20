@@ -1,6 +1,7 @@
 package com.bkav.demochat;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -40,6 +41,10 @@ public class MessageListAdapter extends RecyclerView.Adapter<MessageListViewHold
 
     @Override
     public void onBindViewHolder(@NonNull MessageListViewHolder holder, int position) {
+        int nightModeFlags =
+                mContext.getResources().getConfiguration().uiMode &
+                        Configuration.UI_MODE_NIGHT_MASK;
+
         if (mMessageList.get(position).getIdReceiver() == mIdReceiver){
             LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) holder.mItemLayout.getLayoutParams();
             params.gravity = Gravity.END;
@@ -52,6 +57,9 @@ public class MessageListAdapter extends RecyclerView.Adapter<MessageListViewHold
             params = (LinearLayout.LayoutParams) holder.mTimeMessage.getLayoutParams();
             params.gravity = Gravity.END;
             holder.mTimeMessage.setLayoutParams(params);
+
+            holder.mContentMessage.setBackground(mContext.getResources().getDrawable(R.drawable.background_message_item_send));
+            holder.mContentMessage.setTextColor(mContext.getResources().getColor(R.color.white));
         } else {
             LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) holder.mItemLayout.getLayoutParams();
             params.gravity = Gravity.START;
@@ -65,7 +73,18 @@ public class MessageListAdapter extends RecyclerView.Adapter<MessageListViewHold
             params.gravity = Gravity.START;
             holder.mTimeMessage.setLayoutParams(params);
 
-            holder.mContentMessage.setBackground(mContext.getResources().getDrawable(R.drawable.background_message_item_receiver));
+            if (nightModeFlags == Configuration.UI_MODE_NIGHT_YES){
+                holder.mContentMessage.setBackground(mContext.getResources().getDrawable(R.drawable.background_message_item_receiver_dark));
+            } else if (nightModeFlags == Configuration.UI_MODE_NIGHT_NO){
+                holder.mContentMessage.setTextColor(mContext.getResources().getColor(R.color.black));
+                holder.mContentMessage.setBackground(mContext.getResources().getDrawable(R.drawable.background_message_item_receiver));
+            }
+        }
+
+        if (nightModeFlags == Configuration.UI_MODE_NIGHT_YES){
+            holder.mTimeMessage.setTextColor(mContext.getResources().getColor(R.color.white));
+        } else if (nightModeFlags == Configuration.UI_MODE_NIGHT_NO){
+            holder.mTimeMessage.setTextColor(mContext.getResources().getColor(R.color.black));
         }
 
         holder.bindView(mMessageList.get(position));

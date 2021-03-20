@@ -28,6 +28,12 @@
             android:screenOrientation="portrait"
             android:label="ChatActivity">
         </activity>
+
+        <activity
+            android:name=".ProfileActivity"
+            android:screenOrientation="portrait"
+            android:label="ProfileActivity">
+        </activity>
     </application>
 
 </manifest>
