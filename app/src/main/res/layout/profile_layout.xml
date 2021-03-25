@@ -52,7 +52,7 @@
 
     <TextView
         android:id="@+id/content_email"
-        android:text="anhtiennguyen1711@gmail.com"
+        android:text="email"
         android:layout_marginLeft="30dp"
         android:layout_marginTop="20dp"
         android:textSize="15sp"

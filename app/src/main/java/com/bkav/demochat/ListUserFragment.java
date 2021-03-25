@@ -4,9 +4,21 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import org.jetbrains.annotations.NotNull;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
 
 public class ListUserFragment extends ListFragment {
 
@@ -26,9 +38,50 @@ public class ListUserFragment extends ListFragment {
 
     private void initUserList(){
         mUserList.clear();
-        User user1 = new User(1,"Anh Tien","",true);
-        User user2 = new User(3,"Anh Huy","",true);
-        mUserList.add(user1);
-        mUserList.add(user2);
+        Callback callback = new Callback() {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getContext(), e.toString(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (response.isSuccessful()){
+                            try {
+                                String jsonData = response.body().string();
+                                JSONObject Jobject = new JSONObject(jsonData);
+                                JSONArray jsonArray = Jobject.getJSONArray("content");
+                                for (int i=0;i<jsonArray.length();i++){
+                                    JSONObject Jobject1 =jsonArray.getJSONObject(i);
+                                    int id = Jobject1.getInt("id_account");
+                                    String username = Jobject1.getString("name_account");
+                                    String lastmessenger = "";
+                                    boolean status = Jobject1.getInt("status")==1 ? true: false;
+                                    User user = new User(id,username,lastmessenger, status );
+                                    mUserList.add(user);
+                                }
+                                mChatListAdapter.updateChatList(mUserList);
+                            } catch (JSONException | IOException e) {
+                                Toast.makeText(getContext(), e +"//", Toast.LENGTH_LONG).show();
+                                e.printStackTrace();
+                            }
+
+
+                        }
+                    }
+                });
+            }
+        };
+        String path = "/getaccountactive";
+        RequestToServer.get( path, callback);
+
     }
 }

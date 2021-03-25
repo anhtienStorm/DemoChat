@@ -4,13 +4,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -18,6 +16,8 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import org.jetbrains.annotations.NotNull;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -25,9 +25,6 @@ import java.net.InetAddress;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class LoginFragment extends Fragment {
@@ -66,10 +63,23 @@ public class LoginFragment extends Fragment {
                     @Override
                     public void run() {
                         if (response.isSuccessful()){
-                            Toast.makeText(getContext(), "Đăng nhập thành công", Toast.LENGTH_SHORT).show();
-//                            Intent intent = new Intent(getContext(), HomeActivity.class);
-//                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-//                            startActivity(intent);
+                            try {
+                            String jsonData = response.body().string();
+                            JSONObject Jobject = new JSONObject(jsonData);
+                            Toast.makeText(getContext(), "Đănh nhập thành công :"+Jobject.getInt("id"),Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(getContext(), HomeActivity.class);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            intent.putExtra("ID",Jobject.getInt("id")+"");
+                            intent.putExtra("NAME", Jobject.getString("name"));
+                            intent.putExtra("EMAIL",Jobject.getString("email"));
+                            intent.putExtra("date_crate",Jobject.getString("date_create"));
+                            startActivity(intent);
+                            } catch (JSONException | IOException e) {
+                                Toast.makeText(getContext(), e +"//", Toast.LENGTH_LONG).show();
+                                e.printStackTrace();
+                            }
+
+
                         }
                     }
                 });
@@ -80,7 +90,15 @@ public class LoginFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 if (isNetworkConnected()){
-                    mRequestToServer.post(mUsername.getText().toString(), mPassword.getText().toString(), callback);
+                    JSONObject jsonObject = new JSONObject();
+                    try {
+                        jsonObject.put("username", "username");
+                        jsonObject.put("password","password");
+                        String path ="loginaccount";
+                        RequestToServer.post(path, jsonObject, callback);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                 } else {
                     Toast.makeText(getContext(), "Not Connect Internet", Toast.LENGTH_SHORT).show();
                 }

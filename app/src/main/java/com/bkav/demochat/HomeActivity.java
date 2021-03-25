@@ -1,7 +1,7 @@
 package com.bkav.demochat;
 
-import android.app.ActionBar;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
@@ -18,6 +18,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class HomeActivity extends AppCompatActivity {
 
+    public static String SHAREPREFENCE = "INFOR_ACCOUNT";
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,5 +55,16 @@ public class HomeActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+        Intent intent = getIntent();
+        String ID = intent.getStringExtra("ID");
+        String name = intent.getStringExtra("NAME");
+        String email = intent.getStringExtra("EMAIL");
+        SharedPreferences sharedPref =  getSharedPreferences(SHAREPREFENCE,  MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString("id", ID);
+        editor.putString("name", name);
+        editor.putString("email", email);
+        editor.commit();
+
     }
 }
