@@ -4,11 +4,9 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -49,8 +47,7 @@ public class ChatListFragment extends ListFragment {
                                 int id = Jobject1.getInt("id");
                                 String username = Jobject1.getString("name");
                                 String lastmessenger = Jobject1.getString("content");
-                                Log.d("TienNVh", "run: "+Jobject1.getInt("status"));
-                                boolean status = /*Jobject1.getInt("status") == 1 ? true:*/ false;
+                                boolean status = Jobject1.getInt("status")==1 ? true: false;
                                 User user = new User(id,username,lastmessenger, status );
                                 mUserList.add(user);
                             }

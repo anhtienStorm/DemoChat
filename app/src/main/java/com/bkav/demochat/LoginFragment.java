@@ -62,8 +62,9 @@ public class LoginFragment extends Fragment {
                             intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NEW_TASK/* | Intent.FLAG_ACTIVITY_CLEAR_TASK*/);
                             intent.putExtra("ID",Jobject.getInt("id")+"");
                             intent.putExtra("NAME", Jobject.getString("name"));
+                            intent.putExtra("TOKEN", Jobject.getString("token"));
                             intent.putExtra("EMAIL",Jobject.getString("email"));
-                            intent.putExtra("date_crate",Jobject.getString("date_create"));
+                            intent.putExtra("DATE_CRATE",Jobject.getString("date_create"));
                             startActivity(intent);
                             Toast.makeText(getContext(), "Đănh nhập thành công :"+Jobject.getInt("id"),Toast.LENGTH_SHORT).show();
                         } catch (JSONException e) {
@@ -98,8 +99,8 @@ public class LoginFragment extends Fragment {
                 if (isNetworkConnected()){
                     JSONObject jsonObject = new JSONObject();
                     try {
-                        jsonObject.put("username", "username");
-                        jsonObject.put("password","password");
+                        jsonObject.put("username", "tiennvh98");
+                        jsonObject.put("password","240598");
                         String path ="loginaccount";
                         RequestToServer.post(path, jsonObject, callback);
                     } catch (JSONException e) {
