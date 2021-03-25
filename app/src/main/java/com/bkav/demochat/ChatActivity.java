@@ -9,7 +9,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -176,5 +175,28 @@ public class ChatActivity extends AppCompatActivity {
     public String getDateTimeCurrent(){
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm dd/MM/yyyy");
         return sdf.format(new Date());
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Callback callback = new Callback() {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                if (response.isSuccessful()){
+                    mJsonData = response.body().string();
+                    Log.d("TienNVh", "onStop: "+mJsonData);;
+                }
+            }
+        };
+        SharedPreferences sharedPref = getBaseContext().getSharedPreferences(HomeActivity.SHAREPREFENCE, getApplication().MODE_PRIVATE);
+        String path = "/destroyapp/"+sharedPref.getString("id",null);
+        RequestToServer.get( path, callback);
+
     }
 }

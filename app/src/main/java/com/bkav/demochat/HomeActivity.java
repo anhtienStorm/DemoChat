@@ -3,13 +3,11 @@ package com.bkav.demochat;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
@@ -18,6 +16,14 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+
+import org.jetbrains.annotations.NotNull;
+
+import java.io.IOException;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -71,6 +77,29 @@ public class HomeActivity extends AppCompatActivity {
         editor.putString("name", name);
         editor.putString("email", email);
         editor.commit();
+
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Callback callback = new Callback() {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                if (response.isSuccessful()){
+                   String mJsonData = response.body().string();
+                   Log.d("TienNVh", "onDestroy: "+mJsonData);;
+                }
+            }
+        };
+        SharedPreferences sharedPref = getBaseContext().getSharedPreferences(HomeActivity.SHAREPREFENCE, getApplication().MODE_PRIVATE);
+        String path = "/destroyapp/"+sharedPref.getString("id",null);
+        RequestToServer.get( path, callback);
 
     }
 }
