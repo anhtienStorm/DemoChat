@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,11 +31,15 @@ import okhttp3.Response;
 
 public class LoginFragment extends Fragment {
 
+    private static final int MSG_LOGIN = 1;
+
     private Button mRegisterButton, mLoginButton;
     private EditText mUsername, mPassword;
     private Fragment mRegisterFragment;
     private RequestToServer mRequestToServer;
     public static final MediaType JSON = MediaType.get("application/json; charset=utf-8");
+    private Handler mHandler;
+    private String mJsonData;
 
     @Nullable
     @Override
@@ -44,45 +50,45 @@ public class LoginFragment extends Fragment {
         mRegisterButton = root.findViewById(R.id.register);
         mUsername = root.findViewById(R.id.username_login);
         mPassword = root.findViewById(R.id.password_login);
-        mRequestToServer = new RequestToServer(getActivity());
 
-        Callback callback = new Callback() {
+        mHandler =  new Handler(){
             @Override
-            public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(getContext(), e.toString(), Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
-
-            @Override
-            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (response.isSuccessful()){
-                            try {
-                            String jsonData = response.body().string();
-                            JSONObject Jobject = new JSONObject(jsonData);
-                            Toast.makeText(getContext(), "Đănh nhập thành công :"+Jobject.getInt("id"),Toast.LENGTH_SHORT).show();
+            public void handleMessage(@NonNull Message msg) {
+                switch (msg.what){
+                    case MSG_LOGIN:
+                        try {
+                            JSONObject Jobject = new JSONObject(mJsonData);
                             Intent intent = new Intent(getContext(), HomeActivity.class);
-                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NEW_TASK/* | Intent.FLAG_ACTIVITY_CLEAR_TASK*/);
                             intent.putExtra("ID",Jobject.getInt("id")+"");
                             intent.putExtra("NAME", Jobject.getString("name"));
                             intent.putExtra("EMAIL",Jobject.getString("email"));
                             intent.putExtra("date_crate",Jobject.getString("date_create"));
                             startActivity(intent);
-                            } catch (JSONException | IOException e) {
-                                Toast.makeText(getContext(), e +"//", Toast.LENGTH_LONG).show();
-                                e.printStackTrace();
-                            }
-
-
+                            Toast.makeText(getContext(), "Đănh nhập thành công :"+Jobject.getInt("id"),Toast.LENGTH_SHORT).show();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
                         }
-                    }
-                });
+                        break;
+                }
+            }
+        };
+
+
+        mRequestToServer = new RequestToServer(getActivity());
+
+        Callback callback = new Callback() {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                if (response.isSuccessful()){
+                    mJsonData = response.body().string();
+                    mHandler.sendEmptyMessage(MSG_LOGIN);
+                }
             }
         };
 

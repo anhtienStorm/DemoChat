@@ -3,6 +3,7 @@ package com.bkav.demochat;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -10,6 +11,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -33,6 +35,7 @@ public class ChatActivity extends AppCompatActivity {
 
     private static final String NAME_USER_CHAT = "name_user_chat";
     private static final String ID_RECEIVER = "id_receiver";
+    private static final int MSG_MESSAGE = 5;
 
     private EditText mContentMessageSend;
     private ImageView mButtonSend;
@@ -40,7 +43,8 @@ public class ChatActivity extends AppCompatActivity {
     private MessageListAdapter mMessageListAdapter;
     private ArrayList<Message> mMessageList;
     private int mIdReceiver;
-
+    private Handler mHandler;
+    private String mJsonData;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -78,51 +82,50 @@ public class ChatActivity extends AppCompatActivity {
                 }
             }
         });
-            new Thread(new Runnable() {
+
+        mHandler = new Handler(){
             @Override
-            public void run() {
-                for (int i=1;;i++){
-                    try {
-                        mMessageList.clear();
-                        initMessageList();
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+            public void handleMessage(@NonNull android.os.Message msg) {
+                switch (msg.what){
+                    case MSG_MESSAGE:
+                        try {
+                            JSONObject Jobject = new JSONObject(mJsonData);
+                            JSONArray jsonArray = Jobject.getJSONArray("content");
+                            for (int i=0;i<jsonArray.length();i++){
+                                JSONObject Jobject1 =jsonArray.getJSONObject(i);
+                                int idSender =Integer.parseInt(Jobject1.getString("id_sender"));
+                                int idRevicer =Integer.parseInt(Jobject1.getString("id_reciver"));
+                                String content = Jobject1.getString("content");
+                                String date = Jobject1.getString("date");
+                                Message message = new Message(idSender, idRevicer, content, date);
+                                mMessageList.add(message);
+                            }
+                            mMessageListAdapter.updateMessageList(mMessageList);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        break;
                 }
             }
-        }).start();
+        };
     }
 
     public  void insertChatServer(String contnet){
         Callback callback = new Callback() {
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(getBaseContext(), e.toString(), Toast.LENGTH_SHORT).show();
-                    }
-                });
+                e.printStackTrace();
             }
 
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (response.isSuccessful()){
-                            try {
-                                String jsonData = response.body().string();
-                                Log.d("TienNVh", "run: "+jsonData);
-                            } catch (IOException e) {
-                                Toast.makeText(getBaseContext(), e +"//", Toast.LENGTH_LONG).show();
-                                e.printStackTrace();
-                            }
-
-                        }
+                if (response.isSuccessful()){
+                    try {
+                        String jsonData = response.body().string();
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
-                });
+                }
             }
         };
         JSONObject jsonObject = new JSONObject();
@@ -143,51 +146,26 @@ public class ChatActivity extends AppCompatActivity {
         Callback callback = new Callback() {
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(getBaseContext(), e.toString(), Toast.LENGTH_SHORT).show();
-                    }
-                });
+                e.printStackTrace();
             }
 
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (response.isSuccessful()){
-                            Log.d("TienNVh", "hello: ");
-                            try {
-                                String jsonData = response.body().string();
-                                JSONObject Jobject = new JSONObject(jsonData);
-                                JSONArray jsonArray = Jobject.getJSONArray("content");
-                                for (int i=0;i<jsonArray.length();i++){
-                                    JSONObject Jobject1 =jsonArray.getJSONObject(i);
-                                    int idSender =Integer.parseInt(Jobject1.getString("id_sender"));
-                                    int idRevicer =Integer.parseInt(Jobject1.getString("id_reciver"));
-                                    String content = Jobject1.getString("content");
-                                    String date = Jobject1.getString("date");
-                                    Message message = new Message(idSender, idRevicer, content, date);
-                                    mMessageList.add(message);
-                                }
-                                mMessageListAdapter.updateMessageList(mMessageList);
-                            } catch (JSONException | IOException e) {
-                                Toast.makeText(getBaseContext(), e +"//", Toast.LENGTH_LONG).show();
-                                e.printStackTrace();
-                            }
-
-
-                        }
+                if (response.isSuccessful()){
+                    try {
+                        mJsonData = response.body().string();
+                        mHandler.sendEmptyMessage(MSG_MESSAGE);
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
-                });
+                }
             }
         };
         JSONObject jsonObject = new JSONObject();
         try {
             SharedPreferences sharedPref = getBaseContext().getSharedPreferences(HomeActivity.SHAREPREFENCE, getBaseContext().MODE_PRIVATE);
-            jsonObject.put("id_sender", 2405);
-            jsonObject.put("id_reciver", 2413);
+            jsonObject.put("id_sender", sharedPref.getString("id", null));
+            jsonObject.put("id_reciver", mIdReceiver);
             String path ="listchat";
             RequestToServer.post(path, jsonObject, callback);
         } catch (JSONException e) {
