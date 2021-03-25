@@ -4,6 +4,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +18,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -28,6 +30,7 @@ public class ChatListFragment extends ListFragment {
 
     private Handler mHandler;
     private String mJsonData;
+    private boolean mLoop;
 
     @Nullable
     @Override
@@ -40,6 +43,7 @@ public class ChatListFragment extends ListFragment {
                 switch (msg.what){
                     case MSG_LOAD_CHAT_LIST:
                         try {
+                            ArrayList<User> users = new ArrayList<>();
                             JSONObject Jobject = new JSONObject(mJsonData);
                             JSONArray jsonArray = Jobject.getJSONArray("content");
                             for (int i=0;i<jsonArray.length();i++){
@@ -49,8 +53,9 @@ public class ChatListFragment extends ListFragment {
                                 String lastmessenger = Jobject1.getString("content");
                                 boolean status = Jobject1.getInt("status")==1 ? true: false;
                                 User user = new User(id,username,lastmessenger, status );
-                                mUserList.add(user);
+                                users.add(user);
                             }
+                            mUserList = users;
                             mChatListAdapter.updateChatList(mUserList);
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -66,12 +71,23 @@ public class ChatListFragment extends ListFragment {
     @Override
     public void onResume() {
         super.onResume();
-        initUserList();
-//        mChatListAdapter.updateChatList(mUserList);
+        mLoop = true;
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (mLoop){
+                    try {
+                        initUserList();
+                        Thread.sleep(2000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }).start();
     }
 
     private void initUserList(){
-        mUserList.clear();
         Callback callback = new Callback() {
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
@@ -93,5 +109,11 @@ public class ChatListFragment extends ListFragment {
         SharedPreferences sharedPref = getContext().getSharedPreferences(HomeActivity.SHAREPREFENCE, getContext().MODE_PRIVATE);
         String path = "/getlistaccountrecently/"+sharedPref.getString("id",null);
         RequestToServer.get( path, callback);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        mLoop = false;
     }
 }

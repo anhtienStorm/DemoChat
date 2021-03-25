@@ -67,17 +67,6 @@ public class HomeActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-        Intent intent = getIntent();
-        String ID = intent.getStringExtra("ID");
-        String name = intent.getStringExtra("NAME");
-        String email = intent.getStringExtra("EMAIL");
-        SharedPreferences sharedPref =  getSharedPreferences(SHAREPREFENCE,  MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPref.edit();
-        editor.putString("id", ID);
-        editor.putString("name", name);
-        editor.putString("email", email);
-        editor.commit();
-
     }
 
     @Override

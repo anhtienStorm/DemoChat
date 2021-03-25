@@ -22,7 +22,7 @@
         android:layout_toRightOf="@+id/photo_profile"
         android:layout_marginTop="160dp"
         android:layout_marginLeft="20dp"
-        android:text="Anh Tien"
+        android:text="Name"
         android:textSize="24sp"
         android:textStyle="bold"
         android:textColor="@color/white"
@@ -52,12 +52,33 @@
 
     <TextView
         android:id="@+id/content_email"
-        android:text="email"
+        android:text="Email"
         android:layout_marginLeft="30dp"
         android:layout_marginTop="20dp"
         android:textSize="15sp"
         android:layout_below="@+id/title"
         android:layout_toRightOf="@+id/title_email"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/title_date_create"
+        android:text="Ngày tạo:"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="20dp"
+        android:textSize="15sp"
+        android:layout_below="@+id/title_email"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/content_date_create"
+        android:text="Date create"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="20dp"
+        android:textSize="15sp"
+        android:layout_below="@+id/title_email"
+        android:layout_toRightOf="@+id/title_date_create"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 

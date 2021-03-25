@@ -3,89 +3,97 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <RelativeLayout
+    <ScrollView
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 
-        <TextView
-            android:id="@+id/title_login"
-            android:text="Đăng Nhập"
-            android:textSize="30sp"
-            android:textStyle="bold"
-            android:layout_margin="20dp"
-            android:layout_centerHorizontal="true"
+        <RelativeLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content">
 
-        <EditText
-            android:id="@+id/username_login"
-            android:layout_below="@+id/title_login"
-            android:hint="Username"
-            android:layout_margin="20dp"
-            android:layout_width="300dp"
-            android:layout_height="50dp" />
+            <TextView
+                android:id="@+id/title_login"
+                android:text="Đăng Nhập"
+                android:textSize="30sp"
+                android:textStyle="bold"
+                android:layout_margin="20dp"
+                android:layout_centerHorizontal="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
 
-        <EditText
-            android:id="@+id/password_login"
-            android:inputType="textPassword"
-            android:hint="Password"
-            android:layout_margin="20dp"
-            android:layout_below="@+id/username_login"
-            android:layout_width="300dp"
-            android:layout_height="50dp" />
+            <EditText
+                android:id="@+id/username_login"
+                android:layout_below="@+id/title_login"
+                android:hint="Username"
+                android:layout_margin="20dp"
+                android:layout_width="300dp"
+                android:layout_height="50dp" />
 
-<!--        <com.google.android.material.textfield.TextInputLayout-->
-<!--            android:id="@+id/textinput_username"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_margin="20dp"-->
-<!--            app:hintEnabled="true"-->
-<!--            android:layout_below="@+id/title_login"-->
-<!--            android:layout_height="wrap_content">-->
+            <EditText
+                android:id="@+id/password_login"
+                android:inputType="textPassword"
+                android:hint="Password"
+                android:layout_margin="20dp"
+                android:layout_below="@+id/username_login"
+                android:layout_width="300dp"
+                android:layout_height="50dp" />
 
-<!--            <com.google.android.material.textfield.TextInputEditText-->
-<!--                android:id="@+id/username_login"-->
-<!--                android:layout_width="300dp"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:hint="Username"/>-->
+            <!--        <com.google.android.material.textfield.TextInputLayout-->
+            <!--            android:id="@+id/textinput_username"-->
+            <!--            android:layout_width="wrap_content"-->
+            <!--            android:layout_margin="20dp"-->
+            <!--            app:hintEnabled="true"-->
+            <!--            android:layout_below="@+id/title_login"-->
+            <!--            android:layout_height="wrap_content">-->
 
-<!--        </com.google.android.material.textfield.TextInputLayout>-->
+            <!--            <com.google.android.material.textfield.TextInputEditText-->
+            <!--                android:id="@+id/username_login"-->
+            <!--                android:layout_width="300dp"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:hint="Username"/>-->
 
-<!--        <com.google.android.material.textfield.TextInputLayout-->
-<!--            android:id="@+id/textinput_password"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_margin="20dp"-->
-<!--            app:hintEnabled="true"-->
-<!--            android:layout_below="@+id/textinput_username"-->
-<!--            android:layout_height="wrap_content">-->
-<!--            -->
-<!--            <com.google.android.material.textfield.TextInputEditText-->
-<!--                android:id="@+id/password_login"-->
-<!--                android:layout_width="300dp"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:hint="Password"/>-->
-<!--            -->
-<!--        </com.google.android.material.textfield.TextInputLayout>-->
+            <!--        </com.google.android.material.textfield.TextInputLayout>-->
 
-        <Button
-            android:id="@+id/login"
-            android:text="Đăng Nhập"
-            android:layout_below="@+id/password_login"
-            android:layout_centerHorizontal="true"
-            android:layout_margin="10dp"
-            android:layout_width="150dp"
-            android:layout_height="50dp" />
+            <!--        <com.google.android.material.textfield.TextInputLayout-->
+            <!--            android:id="@+id/textinput_password"-->
+            <!--            android:layout_width="wrap_content"-->
+            <!--            android:layout_margin="20dp"-->
+            <!--            app:hintEnabled="true"-->
+            <!--            android:layout_below="@+id/textinput_username"-->
+            <!--            android:layout_height="wrap_content">-->
+            <!--            -->
+            <!--            <com.google.android.material.textfield.TextInputEditText-->
+            <!--                android:id="@+id/password_login"-->
+            <!--                android:layout_width="300dp"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:hint="Password"/>-->
+            <!--            -->
+            <!--        </com.google.android.material.textfield.TextInputLayout>-->
 
-        <Button
-            android:id="@+id/register"
-            android:text="Đăng Ký"
-            android:layout_below="@+id/login"
-            android:layout_centerHorizontal="true"
-            android:layout_margin="10dp"
-            android:layout_width="150dp"
-            android:layout_height="50dp" />
+            <Button
+                android:id="@+id/login"
+                android:text="Đăng Nhập"
+                android:layout_below="@+id/password_login"
+                android:layout_centerHorizontal="true"
+                android:layout_margin="10dp"
+                android:layout_width="150dp"
+                android:layout_height="50dp" />
 
-    </RelativeLayout>
+            <Button
+                android:id="@+id/register"
+                android:text="Đăng Ký"
+                android:layout_below="@+id/login"
+                android:layout_centerHorizontal="true"
+                android:layout_margin="10dp"
+                android:layout_width="150dp"
+                android:layout_height="50dp" />
+
+        </RelativeLayout>
+
+    </ScrollView>
+
+
 
 </RelativeLayout>

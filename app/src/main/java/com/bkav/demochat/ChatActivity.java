@@ -40,10 +40,11 @@ public class ChatActivity extends AppCompatActivity {
     private ImageView mButtonSend;
     private RecyclerView mMessageRecyclerView;
     private MessageListAdapter mMessageListAdapter;
-    private ArrayList<Message> mMessageList;
+    private ArrayList<Message> mMessageList = new ArrayList<>();
     private int mIdReceiver;
     private Handler mHandler;
     private String mJsonData;
+    private boolean mLoop = true;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -54,10 +55,10 @@ public class ChatActivity extends AppCompatActivity {
         setTitle(intent.getStringExtra(NAME_USER_CHAT));
         mIdReceiver = intent.getIntExtra(ID_RECEIVER, -1);
 
-        mMessageList = new ArrayList<>();
         mMessageRecyclerView = findViewById(R.id.list_message);
         mContentMessageSend = findViewById(R.id.input_message);
         mButtonSend = findViewById(R.id.send_message);
+        mLoop = true;
 
         initMessageList();
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getApplicationContext());
@@ -88,6 +89,7 @@ public class ChatActivity extends AppCompatActivity {
                 switch (msg.what){
                     case MSG_MESSAGE:
                         try {
+                            ArrayList<Message> listMessage = new ArrayList<>();
                             JSONObject Jobject = new JSONObject(mJsonData);
                             JSONArray jsonArray = Jobject.getJSONArray("content");
                             for (int i=0;i<jsonArray.length();i++){
@@ -97,9 +99,13 @@ public class ChatActivity extends AppCompatActivity {
                                 String content = Jobject1.getString("content");
                                 String date = Jobject1.getString("date");
                                 Message message = new Message(idSender, idRevicer, content, date);
-                                mMessageList.add(message);
+                                listMessage.add(message);
                             }
-                            mMessageListAdapter.updateMessageList(mMessageList);
+                            if (mMessageList.size() != listMessage.size()){
+                                mMessageList = listMessage;
+                                mMessageListAdapter.updateMessageList(mMessageList);
+                                mMessageRecyclerView.smoothScrollToPosition(mMessageList.size());
+                            }
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -107,6 +113,20 @@ public class ChatActivity extends AppCompatActivity {
                 }
             }
         };
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (mLoop){
+                    try {
+                        initMessageList();
+                        Thread.sleep(2000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }).start();
     }
 
     public  void insertChatServer(String contnet){
@@ -180,6 +200,7 @@ public class ChatActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
+        mLoop = false;
         Callback callback = new Callback() {
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {

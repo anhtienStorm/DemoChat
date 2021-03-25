@@ -17,6 +17,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -28,6 +29,7 @@ public class ListUserFragment extends ListFragment {
 
     private Handler mHandler;
     private String mJsonData;
+    private boolean mLoop;
 
     @Nullable
     @Override
@@ -39,6 +41,7 @@ public class ListUserFragment extends ListFragment {
                 switch (msg.what){
                     case MSG_LOAD_LIST_USER_ONLINE:
                         try {
+                            ArrayList<User> users = new ArrayList<>();
                             JSONObject Jobject = new JSONObject(mJsonData);
                             JSONArray jsonArray = Jobject.getJSONArray("content");
                             for (int i=0;i<jsonArray.length();i++){
@@ -48,8 +51,9 @@ public class ListUserFragment extends ListFragment {
                                 String lastmessenger = "";
                                 boolean status = Jobject1.getInt("status")==1 ? true: false;
                                 User user = new User(id,username,lastmessenger, status );
-                                mUserList.add(user);
+                                users.add(user);
                             }
+                            mUserList = users;
                             mChatListAdapter.updateChatList(mUserList);
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -58,18 +62,30 @@ public class ListUserFragment extends ListFragment {
                 }
             }
         };
+
         return super.onCreateView(inflater, container, savedInstanceState);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        initUserList();
-        mChatListAdapter.updateChatList(mUserList);
+        mLoop = true;
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (mLoop){
+                    try {
+                        initUserList();
+                        Thread.sleep(2000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }).start();
     }
 
     private void initUserList(){
-        mUserList.clear();
         Callback callback = new Callback() {
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
@@ -86,6 +102,11 @@ public class ListUserFragment extends ListFragment {
         };
         String path = "/getaccountactive";
         RequestToServer.get( path, callback);
+    }
 
+    @Override
+    public void onStop() {
+        super.onStop();
+        mLoop = false;
     }
 }

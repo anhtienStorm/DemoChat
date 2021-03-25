@@ -27,7 +27,7 @@ import static com.bkav.demochat.HomeActivity.MSG_LOAD_LIST_USER_ONLINE;
 public class ProfileActivity extends AppCompatActivity {
 
     private Button mLogout;
-    private TextView mEmail, mName;
+    private TextView mEmail, mName, mDateCreate;
     private Handler mHandler;
     private String mJsonData;
     @Override
@@ -36,10 +36,12 @@ public class ProfileActivity extends AppCompatActivity {
         setContentView(R.layout.profile_layout);
         mEmail = findViewById(R.id.content_email);
         mName = findViewById(R.id.name_user);
+        mDateCreate = findViewById(R.id.content_date_create);
         mLogout = findViewById(R.id.logout);
         SharedPreferences sharedPref = getBaseContext().getSharedPreferences(HomeActivity.SHAREPREFENCE, getBaseContext().MODE_PRIVATE);
-        mName.setText(sharedPref.getString("name", "name"));
+        mName.setText(sharedPref.getString("name", "Name"));
         mEmail.setText(sharedPref.getString("email","Email"));
+        mDateCreate.setText(sharedPref.getString("date_create","Date create"));
         mLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
